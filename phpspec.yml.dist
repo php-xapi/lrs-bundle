@@ -1,0 +1,6 @@
+suites:
+  default:
+    namespace: XApi\LrsBundle
+    psr4_prefix: XApi\LrsBundle
+    spec_prefix: Spec
+    src_path: .
