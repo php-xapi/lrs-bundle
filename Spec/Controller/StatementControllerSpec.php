@@ -3,7 +3,6 @@
 namespace Spec\XApi\LrsBundle\Controller;
 
 use PhpSpec\ObjectBehavior;
-use Rhumsaa\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 use Xabbuh\XApi\Common\Exception\NotFoundException;
 use Xabbuh\XApi\DataFixtures\StatementFixtures;
@@ -56,7 +55,7 @@ class StatementControllerSpec extends ObjectBehavior
     function it_returns_a_409_response_if_the_id_parameter_and_the_statement_id_do_not_match_during_a_put_request()
     {
         $statement = StatementFixtures::getTypicalStatement();
-        $statementId = StatementId::fromUuid(Uuid::uuid4());
+        $statementId = StatementId::fromString('39e24cc4-69af-4b01-a824-1fdc6ea8a3af');
         $request = new Request();
         $request->query->set('statementId', $statementId->getValue());
 
