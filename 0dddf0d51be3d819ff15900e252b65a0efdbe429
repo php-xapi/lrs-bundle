@@ -1,0 +1,43 @@
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-01-11T19:52:01Z
+
+> Should we throw a core Symfony exception or an exception from the php-xapi/exception package and implement a custom exception listener that will build the good Response for the exception ?
+
+We should recheck with the spec whether there is some requirement for the format and information we need to provide (I don't think so, but I might be wrong). Throwing exceptions that can directly be converted to the proper responses by Symfony looks like the best solution to me otherwise.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-01-11T20:49:49Z
+
+According to this https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#211-put-statements, we are only required to return a Response with a specific status code.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-01-11T21:02:18Z
+
+Plus, they only check for the status code in their conformance test suite in https://github.com/adlnet/xAPI_LRS_Test/tree/master/src/features.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-01-13T20:12:32Z
+
+Failure not related. Will be fixed by #4.
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-01-14T20:29:19Z
+
+@Lctrs Do you plan more changes or should I merge here when the code style has been updated?
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-01-15T12:55:07Z
+
+Except if you see more test cases, I don't plan more changes. Goal of this PR has been fulfilled. Other topics evoked in this conversation will be the subjects of other PRs.
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-01-15T13:37:57Z
+
+Looks good to me. I'll merge tonight when I get my hands back on my computer. :)
