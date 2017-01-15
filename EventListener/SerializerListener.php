@@ -30,10 +30,7 @@ class SerializerListener
                     break;
             }
         } catch (BaseSerializerException $e) {
-            throw new BadRequestHttpException(
-                sprintf('The content of the request cannot be deserialized into a valid xAPI %s.', $request->attributes->get('xapi_serializer')),
-                $e
-            );
+            throw new BadRequestHttpException(sprintf('The content of the request cannot be deserialized into a valid xAPI %s.', $request->attributes->get('xapi_serializer')), $e);
         }
     }
 }
