@@ -16,25 +16,25 @@ class StatementControllerSpec extends ObjectBehavior
         $this->beConstructedWith($repository);
     }
 
-    function it_returns_a_400_response_if_a_statement_id_is_not_part_of_a_put_request()
+    function it_throws_a_badrequesthttpexception_if_a_statement_id_is_not_part_of_a_put_request()
     {
         $statement = StatementFixtures::getTypicalStatement();
         $request = new Request();
-        $response = $this->putStatement($request, $statement);
 
-        $response->shouldHaveType('Symfony\Component\HttpFoundation\Response');
-        $response->getStatusCode()->shouldReturn(400);
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->during('putStatement', array($request, $statement));
     }
 
-    function it_returns_a_400_response_if_the_given_statement_id_as_part_of_a_put_request_is_not_a_valid_uuid()
+    function it_throws_a_badrequesthttpexception_if_the_given_statement_id_as_part_of_a_put_request_is_not_a_valid_uuid()
     {
         $statement = StatementFixtures::getTypicalStatement();
         $request = new Request();
         $request->query->set('statementId', 'invalid-uuid');
-        $response = $this->putStatement($request, $statement);
 
-        $response->shouldHaveType('Symfony\Component\HttpFoundation\Response');
-        $response->getStatusCode()->shouldReturn(400);
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->during('putStatement', array($request, $statement));
     }
 
     function it_stores_a_statement_and_returns_a_204_response_if_the_statement_did_not_exist_before(StatementRepositoryInterface $repository)
@@ -52,17 +52,16 @@ class StatementControllerSpec extends ObjectBehavior
         $response->getStatusCode()->shouldReturn(204);
     }
 
-    function it_returns_a_409_response_if_the_id_parameter_and_the_statement_id_do_not_match_during_a_put_request()
+    function it_throws_a_conflicthttpexception_if_the_id_parameter_and_the_statement_id_do_not_match_during_a_put_request()
     {
         $statement = StatementFixtures::getTypicalStatement();
         $statementId = StatementId::fromString('39e24cc4-69af-4b01-a824-1fdc6ea8a3af');
         $request = new Request();
         $request->query->set('statementId', $statementId->getValue());
 
-        $response = $this->putStatement($request, $statement);
-
-        $response->shouldHaveType('Symfony\Component\HttpFoundation\Response');
-        $response->getStatusCode()->shouldReturn(409);
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\ConflictHttpException')
+            ->during('putStatement', array($request, $statement));
     }
 
     function it_uses_id_parameter_in_put_request_if_statement_id_is_null(StatementRepositoryInterface $repository)
@@ -91,7 +90,7 @@ class StatementControllerSpec extends ObjectBehavior
         $this->putStatement($request, $statement);
     }
 
-    function it_returns_a_409_response_if_an_existing_statement_with_the_same_id_is_not_equal_during_a_put_request(StatementRepositoryInterface $repository)
+    function it_throws_a_conflicthttpexception_if_an_existing_statement_with_the_same_id_is_not_equal_during_a_put_request(StatementRepositoryInterface $repository)
     {
         $statement = StatementFixtures::getTypicalStatement();
         $existingStatement = StatementFixtures::getAttachmentStatement()->withId($statement->getId());
@@ -100,9 +99,8 @@ class StatementControllerSpec extends ObjectBehavior
 
         $repository->findStatementById($statement->getId())->willReturn($existingStatement);
 
-        $response = $this->putStatement($request, $statement);
-
-        $response->shouldHaveType('Symfony\Component\HttpFoundation\Response');
-        $response->getStatusCode()->shouldReturn(409);
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\ConflictHttpException')
+            ->during('putStatement', array($request, $statement));
     }
 }
