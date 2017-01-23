@@ -5,18 +5,18 @@ namespace XApi\LrsBundle\EventListener;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as BaseSerializerException;
-use Symfony\Component\Serializer\SerializerInterface;
+use Xabbuh\XApi\Serializer\StatementSerializerInterface;
 
 /**
  * @author Christian Flothmann <christian.flothmann@xabbuh.de>
  */
 class SerializerListener
 {
-    private $serializer;
+    private $statementSerializer;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(StatementSerializerInterface $statementSerializer)
     {
-        $this->serializer = $serializer;
+        $this->statementSerializer = $statementSerializer;
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -26,7 +26,7 @@ class SerializerListener
         try {
             switch ($request->attributes->get('xapi_serializer')) {
                 case 'statement':
-                    $request->attributes->set('statement', $this->serializer->deserialize($request->getContent(), 'Xabbuh\XApi\Model\Statement', 'json'));
+                    $request->attributes->set('statement', $this->statementSerializer->deserializeStatement($request->getContent()));
                     break;
             }
         } catch (BaseSerializerException $e) {

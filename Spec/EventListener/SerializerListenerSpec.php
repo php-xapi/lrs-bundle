@@ -6,17 +6,18 @@ use PhpSpec\ObjectBehavior;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\Serializer\SerializerInterface;
+use Xabbuh\XApi\Serializer\SerializerRegistryInterface;
+use Xabbuh\XApi\Serializer\StatementSerializerInterface;
 use XApi\Fixtures\Json\StatementJsonFixtures;
 
 class SerializerListenerSpec extends ObjectBehavior
 {
-    function it_sets_unserialized_data_as_request_attributes(SerializerInterface $serializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
+    function it_sets_unserialized_data_as_request_attributes(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
     {
         $jsonString = StatementJsonFixtures::getTypicalStatement();
 
-        $serializer->deserialize($jsonString, 'Xabbuh\XApi\Model\Statement', 'json')->shouldBeCalled();
-        $this->beConstructedWith($serializer);
+        $statementSerializer->deserializeStatement($jsonString)->shouldBeCalled();
+        $this->beConstructedWith($statementSerializer);
 
         $attributes->get('xapi_serializer')->willReturn('statement');
         $attributes->set('statement', null)->shouldBeCalled();
@@ -29,10 +30,10 @@ class SerializerListenerSpec extends ObjectBehavior
         $this->onKernelRequest($event);
     }
 
-    function it_throws_a_badrequesthttpexception_if_the_serializer_fails(SerializerInterface $serializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
+    function it_throws_a_badrequesthttpexception_if_the_serializer_fails(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
     {
-        $serializer->deserialize(null, 'Xabbuh\XApi\Model\Statement', 'json')->shouldBeCalled()->willThrow('\Symfony\Component\Serializer\Exception\InvalidArgumentException');
-        $this->beConstructedWith($serializer);
+        $statementSerializer->deserializeStatement(null)->shouldBeCalled()->willThrow('\Symfony\Component\Serializer\Exception\InvalidArgumentException');
+        $this->beConstructedWith($statementSerializer);
 
         $attributes->get('xapi_serializer')->willReturn('statement');
 
