@@ -12,13 +12,12 @@ use XApi\Fixtures\Json\StatementJsonFixtures;
 
 class SerializerListenerSpec extends ObjectBehavior
 {
-    function it_sets_unserialized_data_as_request_attributes(SerializerRegistryInterface $serializerRegistry, StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
+    function it_sets_unserialized_data_as_request_attributes(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
     {
         $jsonString = StatementJsonFixtures::getTypicalStatement();
 
         $statementSerializer->deserializeStatement($jsonString)->shouldBeCalled();
-        $serializerRegistry->getStatementSerializer()->shouldBeCalled()->willReturn($statementSerializer);
-        $this->beConstructedWith($serializerRegistry);
+        $this->beConstructedWith($statementSerializer);
 
         $attributes->get('xapi_serializer')->willReturn('statement');
         $attributes->set('statement', null)->shouldBeCalled();
@@ -31,11 +30,10 @@ class SerializerListenerSpec extends ObjectBehavior
         $this->onKernelRequest($event);
     }
 
-    function it_throws_a_badrequesthttpexception_if_the_serializer_fails(SerializerRegistryInterface $serializerRegistry, StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
+    function it_throws_a_badrequesthttpexception_if_the_serializer_fails(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
     {
         $statementSerializer->deserializeStatement(null)->shouldBeCalled()->willThrow('\Symfony\Component\Serializer\Exception\InvalidArgumentException');
-        $serializerRegistry->getStatementSerializer()->shouldBeCalled()->willReturn($statementSerializer);
-        $this->beConstructedWith($serializerRegistry);
+        $this->beConstructedWith($statementSerializer);
 
         $attributes->get('xapi_serializer')->willReturn('statement');
 
