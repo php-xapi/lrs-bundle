@@ -103,4 +103,63 @@ class StatementControllerSpec extends ObjectBehavior
             ->shouldThrow('\Symfony\Component\HttpKernel\Exception\ConflictHttpException')
             ->during('putStatement', array($request, $statement));
     }
+
+    function it_throws_a_badrequesthttpexception_if_the_request_has_given_statement_id_and_voided_statement_id()
+    {
+        $request = new Request();
+        $request->query->set('statementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+        $request->query->set('voidedStatementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->during('getStatement', array($request));
+    }
+
+    function it_throws_a_badrequesthttpexception_if_the_request_has_statement_id_and_format_and_attachements_and_any_other_parameters()
+    {
+        $request = new Request();
+        $request->query->set('statementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+        $request->query->set('format', 'ids');
+        $request->query->set('attachments', false);
+        $request->query->set('related_agents', false);
+
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->during('getStatement', array($request));
+    }
+
+    function it_throws_a_badrequesthttpexception_if_the_request_has_voided_statement_id_and_format_and_any_other_parameters_except_attachments()
+    {
+        $request = new Request();
+        $request->query->set('voidedStatementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+        $request->query->set('format', 'ids');
+        $request->query->set('related_agents', false);
+
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->during('getStatement', array($request));
+    }
+
+    function it_throws_a_badrequesthttpexception_if_the_request_has_statement_id_and_attachments_and_any_other_parameters_except_format()
+    {
+        $request = new Request();
+        $request->query->set('statementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+        $request->query->set('attachments', false);
+        $request->query->set('related_agents', false);
+
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->during('getStatement', array($request));
+    }
+
+    function it_throws_a_badrequesthttpexception_if_the_request_has_voided_statement_id_and_any_other_parameters_except_format_and_attachments()
+    {
+        $request = new Request();
+        $request->query->set('voidedStatementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+        $request->query->set('related_agents', false);
+
+        $this
+            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->during('getStatement', array($request));
+    }
 }

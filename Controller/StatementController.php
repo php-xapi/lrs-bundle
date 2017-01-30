@@ -73,8 +73,35 @@ final class StatementController
     {
     }
 
-    public function getStatement()
+    /**
+     * @param Request $request
+     */
+    public function getStatement(Request $request)
     {
-        throw new NotFoundException('');
+        $query = $request->query;
+        $statementId = $query->get('statementId');
+        $voidedStatementId = $query->get('voidedStatementId');
+        $hasStatementId = $statementId !== null;
+        $hasVoidedStatementId = $voidedStatementId !== null;
+
+        if ($hasStatementId && $hasVoidedStatementId) {
+            throw new BadRequestHttpException('Request must not have both statementId and voidedStatementId parameters at the same time.');
+        }
+
+        $hasAttachments = $query->has('attachments');
+        $hasFormat = $query->has('format');
+        $queryCount = $query->count();
+
+        if (($hasStatementId || $hasVoidedStatementId) && $hasAttachments && $hasFormat && $queryCount > 3) {
+            throw new BadRequestHttpException();
+        }
+
+        if (($hasStatementId || $hasVoidedStatementId) && ($hasAttachments || $hasFormat) && $queryCount > 2) {
+            throw new BadRequestHttpException();
+        }
+
+        if (($hasStatementId || $hasVoidedStatementId) && $queryCount > 1) {
+            throw new BadRequestHttpException();
+        }
     }
 }
