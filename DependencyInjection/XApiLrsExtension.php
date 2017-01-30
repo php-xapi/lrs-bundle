@@ -30,6 +30,7 @@ final class XApiLrsExtension extends Extension
 
         $loader->load('controller.xml');
         $loader->load('event_listener.xml');
+        $loader->load('factory.xml');
         $loader->load('serializer.xml');
 
         switch ($config['type']) {
