@@ -11,6 +11,7 @@
 
 namespace XApi\LrsBundle\Controller;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -25,6 +26,23 @@ use XApi\Repository\Api\StatementRepositoryInterface;
  */
 final class StatementController
 {
+    private static $getParameters = array(
+        'statementId' => true,
+        'voidedStatementId' => true,
+        'agent' => true,
+        'verb' => true,
+        'activity' => true,
+        'registration' => true,
+        'related_activities' => true,
+        'related_agents' => true,
+        'since' => true,
+        'until' => true,
+        'limit' => true,
+        'format' => true,
+        'attachments' => true,
+        'ascending' => true,
+    );
+
     private $repository;
 
     public function __construct(StatementRepositoryInterface $repository)
@@ -78,7 +96,8 @@ final class StatementController
      */
     public function getStatement(Request $request)
     {
-        $query = $request->query;
+        $query = new ParameterBag(\array_intersect_key($request->query->all(), self::$getParameters));
+
         $statementId = $query->get('statementId');
         $voidedStatementId = $query->get('voidedStatementId');
         $hasStatementId = $statementId !== null;
