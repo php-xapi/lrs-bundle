@@ -11,14 +11,22 @@
 
 namespace XApi\LrsBundle\Controller;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Xabbuh\XApi\Common\Exception\NotFoundException;
+use Xabbuh\XApi\Model\Activity;
+use Xabbuh\XApi\Model\IRI;
 use Xabbuh\XApi\Model\Statement;
 use Xabbuh\XApi\Model\StatementId;
+use Xabbuh\XApi\Model\StatementResult;
+use Xabbuh\XApi\Model\StatementsFilter;
+use Xabbuh\XApi\Model\Verb;
+use Xabbuh\XApi\Serializer\StatementResultSerializerInterface;
+use Xabbuh\XApi\Serializer\StatementSerializerInterface;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
 /**
@@ -44,10 +52,14 @@ final class StatementController
     );
 
     private $repository;
+    private $statementSerializer;
+    private $statementResultSerializer;
 
-    public function __construct(StatementRepositoryInterface $repository)
+    public function __construct(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer)
     {
         $this->repository = $repository;
+        $this->statementSerializer = $statementSerializer;
+        $this->statementResultSerializer = $statementResultSerializer;
     }
 
     public function putStatement(Request $request, Statement $statement)
@@ -112,15 +124,87 @@ final class StatementController
         $queryCount = $query->count();
 
         if (($hasStatementId || $hasVoidedStatementId) && $hasAttachments && $hasFormat && $queryCount > 3) {
-            throw new BadRequestHttpException();
+            throw new BadRequestHttpException('Request must not contain statementId or voidedStatementId parameters, and also any other parameter besides "attachments" or "format".');
         }
 
         if (($hasStatementId || $hasVoidedStatementId) && ($hasAttachments || $hasFormat) && $queryCount > 2) {
-            throw new BadRequestHttpException();
+            throw new BadRequestHttpException('Request must not contain statementId or voidedStatementId parameters, and also any other parameter besides "attachments" or "format".');
         }
 
         if (($hasStatementId || $hasVoidedStatementId) && $queryCount > 1) {
-            throw new BadRequestHttpException();
+            throw new BadRequestHttpException('Request must not contain statementId or voidedStatementId parameters, and also any other parameter besides "attachments" or "format".');
         }
+
+        try {
+            if ($hasStatementId) {
+                $statements = $this->repository->findStatementById(StatementId::fromString($statementId));
+            } elseif ($hasVoidedStatementId) {
+                $statements = $this->repository->findVoidedStatementById(StatementId::fromString($voidedStatementId));
+            } else {
+                $statements = new StatementResult($this->repository->findStatementsBy($this->buildStatementsFilter($query)));
+            }
+        } catch (NotFoundException $e) {
+            $statements = new StatementResult(array());
+        }
+
+        if ($statements instanceof Statement) {
+            $json = $this->statementSerializer->serializeStatement($statements);
+        } else {
+            $json = $this->statementResultSerializer->serializeStatementResult($statements);
+        }
+
+        return new JsonResponse($json, 200, array(), true);
+    }
+
+    /**
+     * @param ParameterBag $query
+     *
+     * @return StatementsFilter
+     */
+    private function buildStatementsFilter(ParameterBag $query)
+    {
+        $filter = new StatementsFilter();
+
+        if (($verbId = $query->get('verb')) !== null) {
+            $filter->byVerb(new Verb(IRI::fromString($verbId)));
+        }
+
+        if (($activityId = $query->get('activity')) !== null) {
+            $filter->byActivity(new Activity(IRI::fromString($activityId)));
+        }
+
+        if (($registration = $query->get('registration')) !== null) {
+            $filter->byRegistration($registration);
+        }
+
+        if ($query->filter('related_activities', false, FILTER_VALIDATE_BOOLEAN)) {
+            $filter->enableRelatedActivityFilter();
+        } else {
+            $filter->disableRelatedActivityFilter();
+        }
+
+        if ($query->filter('related_agents', false, FILTER_VALIDATE_BOOLEAN)) {
+            $filter->enableRelatedAgentFilter();
+        } else {
+            $filter->disableRelatedAgentFilter();
+        }
+
+        if (($since = $query->get('since')) !== null) {
+            $filter->since((new \DateTime())->setTimestamp($since));
+        }
+
+        if (($until = $query->get('until')) !== null) {
+            $filter->until((new \DateTime())->setTimestamp($until));
+        }
+
+        if ($query->filter('ascending', false, FILTER_VALIDATE_BOOLEAN)) {
+            $filter->ascending();
+        } else {
+            $filter->descending();
+        }
+
+        $filter->limit($query->getInt('limit'));
+
+        return $filter;
     }
 }
