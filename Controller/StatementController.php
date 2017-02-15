@@ -189,18 +189,12 @@ final class StatementController
             $filter->disableRelatedAgentFilter();
         }
 
-        if (($timestamp = $query->get('since')) !== null) {
-            $since = new \DateTime();
-            $since->setTimestamp($timestamp);
-
-            $filter->since($since);
+        if (($since = $query->get('since')) !== null) {
+            $filter->since(\DateTime::createFromFormat(\DateTime::ATOM, $since));
         }
 
-        if (($timestamp = $query->get('until')) !== null) {
-            $until = new \DateTime();
-            $until->setTimestamp($timestamp);
-
-            $filter->until($until);
+        if (($until = $query->get('until')) !== null) {
+            $filter->until(\DateTime::createFromFormat(\DateTime::ATOM, $until));
         }
 
         if ($query->filter('ascending', false, FILTER_VALIDATE_BOOLEAN)) {
