@@ -113,10 +113,33 @@ final class StatementController
     {
         $query = new ParameterBag(\array_intersect_key($request->query->all(), self::$getParameters));
 
-        $statementId = $query->get('statementId');
-        $voidedStatementId = $query->get('voidedStatementId');
-        $hasStatementId = $statementId !== null;
-        $hasVoidedStatementId = $voidedStatementId !== null;
+        $this->validate($query);
+
+        try {
+            if (($statementId = $query->get('statementId')) !== null) {
+                $statements = $this->repository->findStatementById(StatementId::fromString($statementId));
+            } elseif (($voidedStatementId = $query->get('voidedStatementId')) !== null) {
+                $statements = $this->repository->findVoidedStatementById(StatementId::fromString($voidedStatementId));
+            } else {
+                $statements = new StatementResult($this->repository->findStatementsBy($this->buildStatementsFilter($query)));
+            }
+        } catch (NotFoundException $e) {
+            $statements = new StatementResult(array());
+        }
+
+        if ($statements instanceof Statement) {
+            $json = $this->statementSerializer->serializeStatement($statements);
+        } else {
+            $json = $this->statementResultSerializer->serializeStatementResult($statements);
+        }
+
+        return new JsonResponse($json, 200, $headers, true);
+    }
+
+    private function validate(ParameterBag $query)
+    {
+        $hasStatementId = $query->has('statementId');
+        $hasVoidedStatementId = $query->has('voidedStatementId');
 
         if ($hasStatementId && $hasVoidedStatementId) {
             throw new BadRequestHttpException('Request must not have both statementId and voidedStatementId parameters at the same time.');
@@ -137,26 +160,6 @@ final class StatementController
         if (($hasStatementId || $hasVoidedStatementId) && $queryCount > 1) {
             throw new BadRequestHttpException('Request must not contain statementId or voidedStatementId parameters, and also any other parameter besides "attachments" or "format".');
         }
-
-        try {
-            if ($hasStatementId) {
-                $statements = $this->repository->findStatementById(StatementId::fromString($statementId));
-            } elseif ($hasVoidedStatementId) {
-                $statements = $this->repository->findVoidedStatementById(StatementId::fromString($voidedStatementId));
-            } else {
-                $statements = new StatementResult($this->repository->findStatementsBy($this->buildStatementsFilter($query)));
-            }
-        } catch (NotFoundException $e) {
-            $statements = new StatementResult(array());
-        }
-
-        if ($statements instanceof Statement) {
-            $json = $this->statementSerializer->serializeStatement($statements);
-        } else {
-            $json = $this->statementResultSerializer->serializeStatementResult($statements);
-        }
-
-        return new JsonResponse($json, 200, array(), true);
     }
 
     /**
