@@ -129,6 +129,8 @@ final class StatementController
 
         if ($statements instanceof Statement) {
             $json = $this->statementSerializer->serializeStatement($statements);
+
+            $headers['Last-Modified'] = $statements->getStored()->format(\DateTime::ATOM);
         } else {
             $json = $this->statementResultSerializer->serializeStatementResult($statements);
         }
