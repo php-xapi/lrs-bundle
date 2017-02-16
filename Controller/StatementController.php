@@ -25,6 +25,7 @@ use Xabbuh\XApi\Model\StatementId;
 use Xabbuh\XApi\Model\StatementResult;
 use Xabbuh\XApi\Model\StatementsFilter;
 use Xabbuh\XApi\Model\Verb;
+use Xabbuh\XApi\Serializer\ActorSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementResultSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementSerializerInterface;
 use XApi\Repository\Api\StatementRepositoryInterface;
@@ -54,12 +55,14 @@ final class StatementController
     private $repository;
     private $statementSerializer;
     private $statementResultSerializer;
+    private $actorSerializer;
 
-    public function __construct(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer)
+    public function __construct(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer, ActorSerializerInterface $actorSerializer)
     {
         $this->repository = $repository;
         $this->statementSerializer = $statementSerializer;
         $this->statementResultSerializer = $statementResultSerializer;
+        $this->actorSerializer = $actorSerializer;
     }
 
     public function putStatement(Request $request, Statement $statement)
@@ -164,6 +167,10 @@ final class StatementController
     private function buildStatementsFilter(ParameterBag $query)
     {
         $filter = new StatementsFilter();
+
+        if (($actor = $query->get('agent')) !== null) {
+            $filter->byActor($this->actorSerializer->deserializeActor($actor));
+        }
 
         if (($verbId = $query->get('verb')) !== null) {
             $filter->byVerb(new Verb(IRI::fromString($verbId)));
