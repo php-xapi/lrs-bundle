@@ -127,6 +127,10 @@ final class StatementController
             $statements = new StatementResult(array());
         }
 
+        $now = new \DateTime();
+        $headers = array(
+            'X-Experience-API-Consistent-Through' => $now->format(\DateTime::ATOM),
+        );
         if ($statements instanceof Statement) {
             $json = $this->statementSerializer->serializeStatement($statements);
 
