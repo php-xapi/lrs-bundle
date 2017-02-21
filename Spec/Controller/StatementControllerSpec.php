@@ -7,15 +7,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Xabbuh\XApi\Common\Exception\NotFoundException;
 use Xabbuh\XApi\DataFixtures\StatementFixtures;
 use Xabbuh\XApi\Model\StatementId;
+use Xabbuh\XApi\Serializer\ActorSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementResultSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementSerializerInterface;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
 class StatementControllerSpec extends ObjectBehavior
 {
-    function let(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer)
+    function let(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer, ActorSerializerInterface $actorSerializer)
     {
-        $this->beConstructedWith($repository, $statementSerializer, $statementResultSerializer);
+        $this->beConstructedWith($repository, $statementSerializer, $statementResultSerializer, $actorSerializer);
     }
 
     function it_throws_a_badrequesthttpexception_if_a_statement_id_is_not_part_of_a_put_request()
