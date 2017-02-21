@@ -28,6 +28,8 @@ use Xabbuh\XApi\Model\Verb;
 use Xabbuh\XApi\Serializer\ActorSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementResultSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementSerializerInterface;
+use XApi\LrsBundle\Response\AttachmentResponse;
+use XApi\LrsBundle\Response\MultipartResponse;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
 /**
@@ -115,31 +117,74 @@ final class StatementController
 
         $this->validate($query);
 
+        $includeAttachments = $query->filter('attachments', false, FILTER_VALIDATE_BOOLEAN);
         try {
             if (($statementId = $query->get('statementId')) !== null) {
-                $statements = $this->repository->findStatementById(StatementId::fromString($statementId));
+                $statement = $this->repository->findStatementById(StatementId::fromString($statementId));
+
+                $response = $this->buildSingleStatementResponse($statement, $includeAttachments);
             } elseif (($voidedStatementId = $query->get('voidedStatementId')) !== null) {
-                $statements = $this->repository->findVoidedStatementById(StatementId::fromString($voidedStatementId));
+                $statement = $this->repository->findVoidedStatementById(StatementId::fromString($voidedStatementId));
+
+                $response = $this->buildSingleStatementResponse($statement, $includeAttachments);
             } else {
-                $statements = new StatementResult($this->repository->findStatementsBy($this->buildStatementsFilter($query)));
+                $statements = $this->repository->findStatementsBy($this->buildStatementsFilter($query));
+
+                $response = $this->buildMultiStatementsResponse($statements, $includeAttachments);
             }
         } catch (NotFoundException $e) {
-            $statements = new StatementResult(array());
+            $response = $this->buildMultiStatementsResponse(array());
         }
 
         $now = new \DateTime();
-        $headers = array(
+        $response->headers->add(array(
             'X-Experience-API-Consistent-Through' => $now->format(\DateTime::ATOM),
-        );
-        if ($statements instanceof Statement) {
-            $json = $this->statementSerializer->serializeStatement($statements);
+        ));
 
-            $headers['Last-Modified'] = $statements->getStored()->format(\DateTime::ATOM);
-        } else {
-            $json = $this->statementResultSerializer->serializeStatementResult($statements);
+        return $response;
+    }
+
+    protected function buildSingleStatementResponse(Statement $statement, $includeAttachments = false)
+    {
+        $json = $this->statementSerializer->serializeStatement($statement);
+
+        $response = new JsonResponse($json, 200, array(), true);
+
+        if ($includeAttachments) {
+            $response = $this->buildMultipartResponse($response, array($statement));
         }
 
-        return new JsonResponse($json, 200, $headers, true);
+        $response->headers->add(array(
+            'Last-Modified' => $statement->getStored()->format(\DateTime::ATOM),
+        ));
+
+        return $response;
+    }
+
+    protected function buildMultiStatementsResponse(array $statements, $includeAttachments = false)
+    {
+        $json = $this->statementResultSerializer->serializeStatementResult(new StatementResult($statements));
+
+        $response = new JsonResponse($json, 200, array(), true);
+
+        if ($includeAttachments) {
+            $response = $this->buildMultipartResponse($response, $statements);
+        }
+
+        return $response;
+    }
+
+    protected function buildMultipartResponse(JsonResponse $statementResponse, array $statements)
+    {
+        $attachmentsParts = array();
+
+        foreach ($statements as $statement) {
+            foreach ((array) $statement->getAttachments() as $attachment) {
+                $attachmentsParts[] = new AttachmentResponse($attachment);
+            }
+        }
+
+        return new MultipartResponse($statementResponse, $attachmentsParts);
     }
 
     private function validate(ParameterBag $query)
