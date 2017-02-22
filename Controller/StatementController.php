@@ -137,9 +137,7 @@ final class StatementController
         }
 
         $now = new \DateTime();
-        $response->headers->add(array(
-            'X-Experience-API-Consistent-Through' => $now->format(\DateTime::ATOM),
-        ));
+        $response->headers->set('X-Experience-API-Consistent-Through', $now->format(\DateTime::ATOM));
 
         return $response;
     }
@@ -154,9 +152,7 @@ final class StatementController
             $response = $this->buildMultipartResponse($response, array($statement));
         }
 
-        $response->headers->add(array(
-            'Last-Modified' => $statement->getStored()->format(\DateTime::ATOM),
-        ));
+        $response->headers->set('Last-Modified', $statement->getStored()->format(\DateTime::ATOM));
 
         return $response;
     }
