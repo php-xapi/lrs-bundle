@@ -23,7 +23,7 @@
     "require-dev": {
         "phpspec/phpspec": "~2.3",
         "php-xapi/json-test-fixtures": "^1.0 || ^2.0",
-        "php-xapi/test-fixtures": "^1.0",
+        "php-xapi/test-fixtures": "^1.0.1",
         "ramsey/uuid": "^2.9 || ^3.0"
     },
     "minimum-stability": "dev",
