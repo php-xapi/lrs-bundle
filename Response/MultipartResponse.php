@@ -66,7 +66,7 @@ class MultipartResponse extends Response
         $content = '';
         foreach ($this->parts as $part) {
             $content .= sprintf('--%s', $this->boundary)."\r\n";
-            $content .= $this->headers."\r\n";
+            $content .= $part->headers."\r\n";
             $content .= $part->getContent();
             $content .= "\r\n";
         }
