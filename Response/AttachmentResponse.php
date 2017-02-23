@@ -54,6 +54,8 @@ class AttachmentResponse extends Response
 
     /**
      * {@inheritdoc}
+     *
+     * @return null|string
      */
     public function getContent()
     {

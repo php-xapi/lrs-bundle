@@ -33,7 +33,9 @@ class MultipartResponse extends Response
 
     public function addAttachmentPart(AttachmentResponse $part)
     {
-        $this->parts[] = $part;
+        if ($part->getContent() !== null) {
+            $this->parts[] = $part;
+        }
 
         return $this;
     }
