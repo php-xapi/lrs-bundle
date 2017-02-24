@@ -10,13 +10,14 @@ use Xabbuh\XApi\Model\StatementId;
 use Xabbuh\XApi\Serializer\ActorSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementResultSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementSerializerInterface;
+use XApi\LrsBundle\Model\StatementsFilterFactory;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
 class StatementControllerSpec extends ObjectBehavior
 {
-    function let(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer, ActorSerializerInterface $actorSerializer)
+    function let(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer, StatementsFilterFactory $statementsFilterFactory)
     {
-        $this->beConstructedWith($repository, $statementSerializer, $statementResultSerializer, $actorSerializer);
+        $this->beConstructedWith($repository, $statementSerializer, $statementResultSerializer, $statementsFilterFactory);
     }
 
     function it_throws_a_badrequesthttpexception_if_a_statement_id_is_not_part_of_a_put_request()

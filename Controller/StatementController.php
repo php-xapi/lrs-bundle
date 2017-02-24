@@ -18,16 +18,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Xabbuh\XApi\Common\Exception\NotFoundException;
-use Xabbuh\XApi\Model\Activity;
-use Xabbuh\XApi\Model\IRI;
 use Xabbuh\XApi\Model\Statement;
 use Xabbuh\XApi\Model\StatementId;
 use Xabbuh\XApi\Model\StatementResult;
-use Xabbuh\XApi\Model\StatementsFilter;
-use Xabbuh\XApi\Model\Verb;
-use Xabbuh\XApi\Serializer\ActorSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementResultSerializerInterface;
 use Xabbuh\XApi\Serializer\StatementSerializerInterface;
+use XApi\LrsBundle\Model\StatementsFilterFactory;
 use XApi\LrsBundle\Response\AttachmentResponse;
 use XApi\LrsBundle\Response\MultipartResponse;
 use XApi\Repository\Api\StatementRepositoryInterface;
@@ -57,14 +53,14 @@ final class StatementController
     private $repository;
     private $statementSerializer;
     private $statementResultSerializer;
-    private $actorSerializer;
+    private $statementsFilterFactory;
 
-    public function __construct(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer, ActorSerializerInterface $actorSerializer)
+    public function __construct(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer, StatementsFilterFactory $statementsFilterFactory)
     {
         $this->repository = $repository;
         $this->statementSerializer = $statementSerializer;
         $this->statementResultSerializer = $statementResultSerializer;
-        $this->actorSerializer = $actorSerializer;
+        $this->statementsFilterFactory = $statementsFilterFactory;
     }
 
     public function putStatement(Request $request, Statement $statement)
@@ -128,7 +124,7 @@ final class StatementController
 
                 $response = $this->buildSingleStatementResponse($statement, $includeAttachments);
             } else {
-                $statements = $this->repository->findStatementsBy($this->buildStatementsFilter($query));
+                $statements = $this->repository->findStatementsBy($this->statementsFilterFactory->createFromParameterBag($query));
 
                 $response = $this->buildMultiStatementsResponse($statements, $includeAttachments);
             }
@@ -207,61 +203,5 @@ final class StatementController
         if (($hasStatementId || $hasVoidedStatementId) && $queryCount > 1) {
             throw new BadRequestHttpException('Request must not contain statementId or voidedStatementId parameters, and also any other parameter besides "attachments" or "format".');
         }
-    }
-
-    /**
-     * @param ParameterBag $query
-     *
-     * @return StatementsFilter
-     */
-    private function buildStatementsFilter(ParameterBag $query)
-    {
-        $filter = new StatementsFilter();
-
-        if (($actor = $query->get('agent')) !== null) {
-            $filter->byActor($this->actorSerializer->deserializeActor($actor));
-        }
-
-        if (($verbId = $query->get('verb')) !== null) {
-            $filter->byVerb(new Verb(IRI::fromString($verbId)));
-        }
-
-        if (($activityId = $query->get('activity')) !== null) {
-            $filter->byActivity(new Activity(IRI::fromString($activityId)));
-        }
-
-        if (($registration = $query->get('registration')) !== null) {
-            $filter->byRegistration($registration);
-        }
-
-        if ($query->filter('related_activities', false, FILTER_VALIDATE_BOOLEAN)) {
-            $filter->enableRelatedActivityFilter();
-        } else {
-            $filter->disableRelatedActivityFilter();
-        }
-
-        if ($query->filter('related_agents', false, FILTER_VALIDATE_BOOLEAN)) {
-            $filter->enableRelatedAgentFilter();
-        } else {
-            $filter->disableRelatedAgentFilter();
-        }
-
-        if (($since = $query->get('since')) !== null) {
-            $filter->since(\DateTime::createFromFormat(\DateTime::ATOM, $since));
-        }
-
-        if (($until = $query->get('until')) !== null) {
-            $filter->until(\DateTime::createFromFormat(\DateTime::ATOM, $until));
-        }
-
-        if ($query->filter('ascending', false, FILTER_VALIDATE_BOOLEAN)) {
-            $filter->ascending();
-        } else {
-            $filter->descending();
-        }
-
-        $filter->limit($query->getInt('limit'));
-
-        return $filter;
     }
 }
