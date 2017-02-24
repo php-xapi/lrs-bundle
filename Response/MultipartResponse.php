@@ -1,11 +1,23 @@
 <?php
 
+/*
+ * This file is part of the xAPI package.
+ *
+ * (c) Christian Flothmann <christian.flothmann@xabbuh.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace XApi\LrsBundle\Response;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
+ */
 class MultipartResponse extends Response
 {
     protected $subtype;
@@ -16,6 +28,13 @@ class MultipartResponse extends Response
      */
     protected $parts;
 
+    /**
+     * @param JsonResponse         $statementPart
+     * @param AttachmentResponse[] $attachmentsParts
+     * @param int                  $status
+     * @param array                $headers
+     * @param null|string          $subtype
+     */
     public function __construct(JsonResponse $statementPart, array $attachmentsParts = array(), $status = 200, array $headers = array(), $subtype = null)
     {
         parent::__construct(null, $status, $headers);
@@ -31,6 +50,11 @@ class MultipartResponse extends Response
         $this->setAttachmentsParts($attachmentsParts);
     }
 
+    /**
+     * @param AttachmentResponse $part
+     *
+     * @return $this
+     */
     public function addAttachmentPart(AttachmentResponse $part)
     {
         if ($part->getContent() !== null) {
@@ -40,6 +64,11 @@ class MultipartResponse extends Response
         return $this;
     }
 
+    /**
+     * @param AttachmentResponse[] $attachmentsParts
+     *
+     * @return $this
+     */
     public function setAttachmentsParts(array $attachmentsParts)
     {
         $this->parts = array($this->statementPart);
@@ -51,6 +80,9 @@ class MultipartResponse extends Response
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function prepare(Request $request)
     {
         foreach ($this->parts as $part) {
@@ -63,6 +95,9 @@ class MultipartResponse extends Response
         return parent::prepare($request);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function sendContent()
     {
         $content = '';

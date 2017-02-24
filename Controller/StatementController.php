@@ -106,6 +106,10 @@ final class StatementController
 
     /**
      * @param Request $request
+     *
+     * @throws BadRequestHttpException if the query parameters does not comply with xAPI specification
+     *
+     * @return Response
      */
     public function getStatement(Request $request)
     {
@@ -138,6 +142,12 @@ final class StatementController
         return $response;
     }
 
+    /**
+     * @param Statement $statement
+     * @param bool      $includeAttachments true to include the attachments in the response, false otherwise
+     *
+     * @return JsonResponse|MultipartResponse
+     */
     protected function buildSingleStatementResponse(Statement $statement, $includeAttachments = false)
     {
         $json = $this->statementSerializer->serializeStatement($statement);
@@ -153,6 +163,12 @@ final class StatementController
         return $response;
     }
 
+    /**
+     * @param Statement[] $statements
+     * @param bool        $includeAttachments true to include the attachments in the response, false otherwise
+     *
+     * @return JsonResponse|MultipartResponse
+     */
     protected function buildMultiStatementsResponse(array $statements, $includeAttachments = false)
     {
         $json = $this->statementResultSerializer->serializeStatementResult(new StatementResult($statements));
@@ -166,6 +182,12 @@ final class StatementController
         return $response;
     }
 
+    /**
+     * @param JsonResponse $statementResponse
+     * @param Statement[]  $statements
+     *
+     * @return MultipartResponse
+     */
     protected function buildMultipartResponse(JsonResponse $statementResponse, array $statements)
     {
         $attachmentsParts = array();
@@ -179,6 +201,13 @@ final class StatementController
         return new MultipartResponse($statementResponse, $attachmentsParts);
     }
 
+    /**
+     * Validate the parameters.
+     *
+     * @param ParameterBag $query
+     *
+     * @throws BadRequestHttpException if the parameters does not comply with the xAPI specification
+     */
     private function validate(ParameterBag $query)
     {
         $hasStatementId = $query->has('statementId');
