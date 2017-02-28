@@ -1,0 +1,116 @@
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-01-31T08:51:32Z
+
+Please ignore my question. I think I have an idea to fix this using Symfony's OptionsResolver component.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-15T17:05:08Z
+
+Here is what are left to be implemented :
+
+- [x] Support for `agent` parameter
+- [x] Support for `attachments` parameter
+- [x] Add a `X-Experience-API-Consistent-Through` header in response
+- [x] Add a `Last-Modified` header in response
+- [x] Update tests
+
+WDYT for now ?
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-15T17:16:19Z
+
+~~Oups. I haven't read the spec about the Timestamp's format. I'll update my PR soon to handle a ISO 8601 formatted date instead of a true timestamp.~~ Done.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-16T22:33:39Z
+
+Few questions :
+
+- List of dependencies just for the GET operation just grow bigger and bigger. Maybe we should consider moving it into a dedicated controller class.
+
+- Support for `format` and `attachments` parameters are nearly impossible with the current API.
+  * For the `format` parameter, maybe we should find a way to configure the serialization of a statement.
+  * For the `attachments` parameter, same or dropping the Attachement Normalizer on Statement serialize, and implementing a Attachment Serializer in all case.
+
+WDYT ?
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-02-17T20:50:33Z
+
+We could create a dedicated controller for all endpoints to be implemented. That shouldn't be a problem.
+
+Not sure I understand your remark about the attachment serializer. Can you elaborate a bit?
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-18T10:55:15Z
+
+According to the specs, when `attachments` parameter is :
+
+- `false` : don't include the serialized attachments in the response and send it as a Json response.
+- `true` : Send a Multipart response and include the serialized attachments in another part of the response.
+
+Currently, I have no idea how to achieve it with the current API.
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-02-20T08:25:15Z
+
+The spec doesn't say anything about not including the attachment metadata in the serialised JSON. The option is only meant to control whether or not you will also include the binary data of all the attachments in the response.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-20T11:42:30Z
+
+According to https://github.com/adlnet/lrs-conformance-test-suite/tree/master/test/v1_0_3/templates/attachments, you're right !
+
+I was misled by their redirection in the spec.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-21T17:38:43Z
+
+I just pushed some commits to support `attachments` parameter. Things could probably be exploded into more classes (for exemple a `StatementsFilterFactory` class instead of the `buildStatementsFilter` method in the controller) but core logic is here ! Any feedbacks on this ?
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-02-21T18:01:29Z
+
+We need to update the requirements in `composer.json` to always get a version of the `php-xapi/model` package that offers the `Attachment::getContent()` method:
+
+```
+"php-xapi/model": "^1.1 || ^2.0"
+```
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-23T11:59:53Z
+
+For now, the API of our libraries have no support for the `format` parameter. So I won't implement it for now.
+
+Also, the split of every action in their own controller will be part of another PR.
+
+I'll focus on the tests and it should be good to merge then.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-23T12:01:07Z
+
+PS : I'll also add some docblocks.
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-02-23T13:04:15Z
+
+sounds good to me
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-02-27T14:43:07Z
+
+If tests are green, it should be good.
