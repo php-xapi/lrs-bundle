@@ -5,8 +5,17 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="xapi_lrs.controller.statement" class="XApi\LrsBundle\Controller\StatementController">
-            <argument type="service" id="xapi_lrs.repository.statement" />
+        <service id="xapi_lrs.controller.statement.get" class="XApi\LrsBundle\Controller\GetStatementController">
+            <argument type="service" id="xapi_lrs.repository.statement"/>
+            <argument type="service" id="xapi_lrs.statement.serializer"/>
+            <argument type="service" id="xapi_lrs.statement_result.serializer"/>
+            <argument type="service" id="xapi_lrs.factory.statements_filter"/>
+        </service>
+        
+        <service id="xapi_lrs.controller.statement.post" class="XApi\LrsBundle\Controller\PostStatementController"/>
+        
+        <service id="xapi_lrs.controller.statement.put" class="XApi\LrsBundle\Controller\PutStatementController">
+            <argument type="service" id="xapi_lrs.repository.statement"/>
         </service>
     </services>
 </container>
