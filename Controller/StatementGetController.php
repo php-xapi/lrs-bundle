@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Xabbuh\XApi\Common\Exception\NotFoundException;
 use Xabbuh\XApi\Model\Statement;
 use Xabbuh\XApi\Model\StatementId;
@@ -29,9 +28,9 @@ use XApi\LrsBundle\Response\MultipartResponse;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
 /**
- * @author Christian Flothmann <christian.flothmann@xabbuh.de>
+ * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
  */
-final class StatementController
+final class StatementGetController
 {
     private static $getParameters = array(
         'statementId' => true,
@@ -61,47 +60,6 @@ final class StatementController
         $this->statementSerializer = $statementSerializer;
         $this->statementResultSerializer = $statementResultSerializer;
         $this->statementsFilterFactory = $statementsFilterFactory;
-    }
-
-    public function putStatement(Request $request, Statement $statement)
-    {
-        if (null === $statementId = $request->query->get('statementId')) {
-            throw new BadRequestHttpException('Required statementId parameter is missing.');
-        }
-
-        try {
-            $id = StatementId::fromString($statementId);
-        } catch (\InvalidArgumentException $e) {
-            throw new BadRequestHttpException(sprintf('Parameter statementId ("%s") is not a valid UUID.', $statementId), $e);
-        }
-
-        if (null !== $statement->getId() && !$id->equals($statement->getId())) {
-            throw new ConflictHttpException(sprintf('Id parameter ("%s") and statement id ("%s") do not match.', $id->getValue(), $statement->getId()->getValue()));
-        }
-
-        try {
-            $existingStatement = $this->repository->findStatementById($id);
-
-            if (!$existingStatement->equals($statement)) {
-                throw new ConflictHttpException('The new statement is not equal to an existing statement with the same id.');
-            }
-        } catch (NotFoundException $e) {
-            $this->repository->storeStatement($statement, true);
-        }
-
-        return new Response('', 204);
-    }
-
-    public function postStatement(Request $request, Statement $statement)
-    {
-    }
-
-    /**
-     * @param Request     $request
-     * @param Statement[] $statements
-     */
-    public function postStatements(Request $request, array $statements)
-    {
     }
 
     /**
@@ -158,7 +116,7 @@ final class StatementController
             $response = $this->buildMultipartResponse($response, array($statement));
         }
 
-        $response->headers->set('Last-Modified', $statement->getStored()->format(\DateTime::ATOM));
+        $response->setLastModified($statement->getStored());
 
         return $response;
     }
