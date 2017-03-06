@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class AlternateRequestSyntaxListenerSpec extends ObjectBehavior
 {
-    function let(GetResponseEvent $event, Request $request, ParameterBag $query, ParameterBag $post, ParameterBag $attributes, ParameterBag $cookies, FileBag $files, ServerBag $server, HeaderBag $headers)
+    function let(GetResponseEvent $event, Request $request, ParameterBag $query, ParameterBag $post, ParameterBag $attributes, HeaderBag $headers)
     {
         $query->count()->willReturn(1);
         $query->get('method')->willReturn('GET');
@@ -20,8 +20,11 @@ class AlternateRequestSyntaxListenerSpec extends ObjectBehavior
         $post->getIterator()->willReturn(new \ArrayIterator());
         $post->get('content')->willReturn(null);
 
+        $attributes->has('xapi_lrs.route')->willReturn(true);
+
         $request->query = $query;
         $request->request = $post;
+        $request->attributes = $attributes;
         $request->headers = $headers;
         $request->getMethod()->willReturn('POST');
 
@@ -29,10 +32,17 @@ class AlternateRequestSyntaxListenerSpec extends ObjectBehavior
         $event->getRequest()->willReturn($request);
     }
 
-    function it_returns_null_if_not_request_is_not_master(GetResponseEvent $event)
+    function it_returns_null_if_request_is_not_master(GetResponseEvent $event)
     {
         $event->isMasterRequest()->willReturn(false);
         $event->getRequest()->shouldNotBeCalled();
+
+        $this->onKernelRequest($event)->shouldReturn(null);
+    }
+
+    function it_returns_null_if_request_has_no_attribute_xapi_lrs_route(GetResponseEvent $event, ParameterBag $attributes)
+    {
+        $attributes->has('xapi_lrs.route')->shouldBeCalled()->willReturn(false);
 
         $this->onKernelRequest($event)->shouldReturn(null);
     }
@@ -141,7 +151,6 @@ class AlternateRequestSyntaxListenerSpec extends ObjectBehavior
             'a content'
         )->shouldBeCalled();
 
-        $request->attributes = $attributes;
         $request->cookies = $cookies;
         $request->files = $files;
         $request->server = $server;

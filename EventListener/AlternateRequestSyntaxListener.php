@@ -15,6 +15,10 @@ class AlternateRequestSyntaxListener
 
         $request = $event->getRequest();
 
+        if (!$request->attributes->has('xapi_lrs.route')) {
+            return;
+        }
+
         if ('POST' !== $request->getMethod()) {
             return;
         }

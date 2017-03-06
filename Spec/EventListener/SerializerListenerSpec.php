@@ -20,6 +20,7 @@ class SerializerListenerSpec extends ObjectBehavior
 
         $attributes->get('xapi_serializer')->willReturn('statement');
         $attributes->set('statement', null)->shouldBeCalled();
+        $attributes->has('xapi_lrs.route')->willReturn(true);
 
         $request->attributes = $attributes;
         $request->getContent()->shouldBeCalled()->willReturn($jsonString);
@@ -35,6 +36,7 @@ class SerializerListenerSpec extends ObjectBehavior
         $this->beConstructedWith($statementSerializer);
 
         $attributes->get('xapi_serializer')->willReturn('statement');
+        $attributes->has('xapi_lrs.route')->willReturn(true);
 
         $request->attributes = $attributes;
 
