@@ -15,11 +15,21 @@
             "homepage": "https://github.com/Lctrs"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Lctrs/serializer"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Lctrs/repository-api"
+        }
+    ],
     "require": {
         "php-xapi/exception": "^0.1",
         "php-xapi/model": "^1.1 || ^2.0",
-        "php-xapi/repository-api": "^0.3@dev || ^0.4@dev",
-        "php-xapi/serializer": "^1.0 || ^2.0",
+        "php-xapi/repository-api": "dev-feature/activity-repository",
+        "php-xapi/serializer": "dev-feature/activity-serializer as 2.1.x-dev",
         "php-xapi/symfony-serializer": "^1.0 || ^2.0",
         "symfony/dependency-injection": "^2.7 || ^3.1",
         "symfony/http-kernel": "^2.7 || ^3.1"
