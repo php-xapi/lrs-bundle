@@ -40,7 +40,7 @@ class AlternateRequestSyntaxListener
         }
 
         if ($request->query->count() > 1) {
-            throw new BadRequestHttpException('Including other query paramaters than method is not allowed. You should send them as post parameters.');
+            throw new BadRequestHttpException('Including other query parameters than "method" is not allowed. You have to send them as POST parameters inside the request body.');
         }
 
         $request->setMethod($method);
