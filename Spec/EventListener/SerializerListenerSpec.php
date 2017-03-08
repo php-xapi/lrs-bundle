@@ -11,20 +11,35 @@ use XApi\Fixtures\Json\StatementJsonFixtures;
 
 class SerializerListenerSpec extends ObjectBehavior
 {
+    function let(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
+    {
+        $attributes->has('xapi_lrs.route')->willReturn(true);
+
+        $request->attributes = $attributes;
+
+        $event->getRequest()->willReturn($request);
+
+        $this->beConstructedWith($statementSerializer);
+    }
+
+    function it_returns_null_if_request_has_no_attribute_xapi_lrs_route(GetResponseEvent $event, ParameterBag $attributes)
+    {
+        $attributes->has('xapi_lrs.route')->shouldBeCalled()->willReturn(false);
+        $attributes->get('xapi_serializer')->shouldNotBeCalled();
+
+        $this->onKernelRequest($event)->shouldReturn(null);
+    }
+
     function it_sets_unserialized_data_as_request_attributes(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
     {
         $jsonString = StatementJsonFixtures::getTypicalStatement();
 
         $statementSerializer->deserializeStatement($jsonString)->shouldBeCalled();
-        $this->beConstructedWith($statementSerializer);
 
         $attributes->get('xapi_serializer')->willReturn('statement');
         $attributes->set('statement', null)->shouldBeCalled();
 
-        $request->attributes = $attributes;
         $request->getContent()->shouldBeCalled()->willReturn($jsonString);
-
-        $event->getRequest()->willReturn($request);
 
         $this->onKernelRequest($event);
     }
@@ -32,13 +47,10 @@ class SerializerListenerSpec extends ObjectBehavior
     function it_throws_a_badrequesthttpexception_if_the_serializer_fails(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
     {
         $statementSerializer->deserializeStatement(null)->shouldBeCalled()->willThrow('\Symfony\Component\Serializer\Exception\InvalidArgumentException');
-        $this->beConstructedWith($statementSerializer);
 
         $attributes->get('xapi_serializer')->willReturn('statement');
 
         $request->attributes = $attributes;
-
-        $event->getRequest()->willReturn($request);
 
         $this
             ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
