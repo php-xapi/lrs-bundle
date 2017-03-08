@@ -13,6 +13,8 @@ class SerializerListenerSpec extends ObjectBehavior
 {
     function let(StatementSerializerInterface $statementSerializer, GetResponseEvent $event, Request $request, ParameterBag $attributes)
     {
+        $attributes->has('xapi_lrs.route')->willReturn(true);
+
         $request->attributes = $attributes;
 
         $event->getRequest()->willReturn($request);
@@ -36,7 +38,6 @@ class SerializerListenerSpec extends ObjectBehavior
 
         $attributes->get('xapi_serializer')->willReturn('statement');
         $attributes->set('statement', null)->shouldBeCalled();
-        $attributes->has('xapi_lrs.route')->willReturn(true);
 
         $request->getContent()->shouldBeCalled()->willReturn($jsonString);
 
@@ -48,7 +49,6 @@ class SerializerListenerSpec extends ObjectBehavior
         $statementSerializer->deserializeStatement(null)->shouldBeCalled()->willThrow('\Symfony\Component\Serializer\Exception\InvalidArgumentException');
 
         $attributes->get('xapi_serializer')->willReturn('statement');
-        $attributes->has('xapi_lrs.route')->willReturn(true);
 
         $request->attributes = $attributes;
 
