@@ -116,7 +116,7 @@ final class GetStatementController
             $response = $this->buildMultipartResponse($response, array($statement));
         }
 
-        $response->headers->set('Last-Modified', $statement->getStored()->format(\DateTime::ATOM));
+        $response->setLastModified($statement->getStored());
 
         return $response;
     }
