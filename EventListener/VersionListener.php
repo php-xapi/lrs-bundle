@@ -33,7 +33,7 @@ class VersionListener
         }
 
         if (null === $version = $request->headers->get('X-Experience-API-Version')) {
-            throw new BadRequestHttpException('Missing required header "X-Experience-API-Version".');
+            throw new BadRequestHttpException('Missing required "X-Experience-API-Version" header.');
         }
 
         if ($version === '1.0' || 0 === strpos($version, '1.0.')) {

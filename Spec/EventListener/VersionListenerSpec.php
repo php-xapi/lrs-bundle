@@ -54,7 +54,7 @@ class VersionListenerSpec extends ObjectBehavior
         $requestHeaders->get('X-Experience-API-Version')->shouldBeCalled()->willReturn(null);
 
         $this
-            ->shouldThrow(new BadRequestHttpException('Missing required header "X-Experience-API-Version".'))
+            ->shouldThrow(new BadRequestHttpException('Missing required "X-Experience-API-Version" header.'))
             ->during('onKernelRequest', array($getResponseEvent));
     }
 
