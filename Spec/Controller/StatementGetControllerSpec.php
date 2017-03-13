@@ -18,7 +18,7 @@ use XApi\Fixtures\Json\StatementResultJsonFixtures;
 use XApi\LrsBundle\Model\StatementsFilterFactory;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
-class GetStatementControllerSpec extends ObjectBehavior
+class StatementGetControllerSpec extends ObjectBehavior
 {
     function let(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer, StatementResultSerializerInterface $statementResultSerializer, StatementsFilterFactory $statementsFilterFactory)
     {

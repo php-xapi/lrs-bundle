@@ -30,7 +30,7 @@ use XApi\Repository\Api\StatementRepositoryInterface;
 /**
  * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
  */
-final class GetStatementController
+final class StatementGetController
 {
     private static $getParameters = array(
         'statementId' => true,

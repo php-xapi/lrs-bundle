@@ -9,7 +9,7 @@ use Xabbuh\XApi\DataFixtures\StatementFixtures;
 use Xabbuh\XApi\Model\StatementId;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
-class PutStatementControllerSpec extends ObjectBehavior
+class StatementPutControllerSpec extends ObjectBehavior
 {
     function let(StatementRepositoryInterface $repository)
     {

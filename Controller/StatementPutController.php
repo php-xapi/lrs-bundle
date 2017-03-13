@@ -23,7 +23,7 @@ use XApi\Repository\Api\StatementRepositoryInterface;
 /**
  * @author Christian Flothmann <christian.flothmann@xabbuh.de>
  */
-final class PutStatementController
+final class StatementPutController
 {
     private $repository;
 

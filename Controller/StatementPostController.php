@@ -17,7 +17,7 @@ use Xabbuh\XApi\Model\Statement;
 /**
  * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
  */
-final class PostStatementController
+final class StatementPostController
 {
     public function postStatement(Request $request, Statement $statement)
     {
