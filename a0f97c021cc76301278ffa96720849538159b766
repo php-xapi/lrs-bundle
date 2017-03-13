@@ -1,0 +1,39 @@
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-03-06T15:58:55Z
+
+I think we should add a custom attribute to our route definitions and let the listener terminate early when that attribute is not set to not modify requests not related to the Experience API.
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-03-06T15:59:51Z
+
+@Lctrs generally that's a very nice approach 👍
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-03-06T17:38:39Z
+
+For this, I propose to introduce a custom route loader that will support `xapi_lrs` type. It will be in charge of adding the custom attribute on our routes.
+
+I propose the custom attribute to be named `xapi_lrs.route` and will hold a true boolean.
+
+WDYT ?
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2017-03-06T17:47:22Z
+
+I think adding a custom loader just for that is overkill. You can just add such an attribute manually to all our routes (just reference them with the `default` option). :+1: for the suggested name by the way.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-03-06T18:07:16Z
+
+I just proposed that to be sure we don't forget to add it one day. But it's always an easy fix. I'll add it manually.
+
+---------------------------------------------------------------------------
+
+by Lctrs at 2017-03-07T11:36:32Z
+
+@xabbuh Should be good now.
