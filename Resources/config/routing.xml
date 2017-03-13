@@ -5,16 +5,16 @@
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <route id="xapi_lrs.statement.put" path="/statements" methods="PUT">
-        <default key="_controller">xapi_lrs.controller.statement:putStatement</default>
+        <default key="_controller">xapi_lrs.controller.statement.put:putStatement</default>
         <default key="xapi_serializer">statement</default>
     </route>
 
     <route id="xapi_lrs.statement.post" path="/statements" methods="POST">
-        <default key="_controller">xapi_lrs.controller.statement:postStatement</default>
+        <default key="_controller">xapi_lrs.controller.statement.post:postStatement</default>
         <default key="xapi_serializer">statement</default>
     </route>
 
     <route id="xapi_lrs.statement.get" path="/statements" methods="GET">
-        <default key="_controller">xapi_lrs.controller.statement:getStatement</default>
+        <default key="_controller">xapi_lrs.controller.statement.get:getStatement</default>
     </route>
 </routes>
