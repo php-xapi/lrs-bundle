@@ -23,6 +23,10 @@ class SerializerListener
     {
         $request = $event->getRequest();
 
+        if (!$request->attributes->has('xapi_lrs.route')) {
+            return;
+        }
+
         try {
             switch ($request->attributes->get('xapi_serializer')) {
                 case 'statement':
