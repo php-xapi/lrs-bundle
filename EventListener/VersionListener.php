@@ -36,7 +36,7 @@ class VersionListener
             throw new BadRequestHttpException('Missing required "X-Experience-API-Version" header.');
         }
 
-        if ($version === '1.0' || 0 === strpos($version, '1.0.')) {
+        if (preg_match('/^1\.0(?:\.\d+)?$/', $version)) {
             return;
         }
 
