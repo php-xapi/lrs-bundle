@@ -5,15 +5,20 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="xapi_lrs.controller.activity.get" class="XApi\LrsBundle\Controller\GetActivityController">
+            <argument type="service" id="xapi_lrs.repository.activity" />
+            <argument type="service" id="xapi_lrs.serializer.activity" />
+        </service>
+
         <service id="xapi_lrs.controller.statement.get" class="XApi\LrsBundle\Controller\StatementGetController">
             <argument type="service" id="xapi_lrs.repository.statement"/>
             <argument type="service" id="xapi_lrs.statement.serializer"/>
             <argument type="service" id="xapi_lrs.statement_result.serializer"/>
             <argument type="service" id="xapi_lrs.factory.statements_filter"/>
         </service>
-        
+
         <service id="xapi_lrs.controller.statement.post" class="XApi\LrsBundle\Controller\StatementPostController"/>
-        
+
         <service id="xapi_lrs.controller.statement.put" class="XApi\LrsBundle\Controller\StatementPutController">
             <argument type="service" id="xapi_lrs.repository.statement"/>
         </service>

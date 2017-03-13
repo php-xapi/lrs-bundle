@@ -5,6 +5,8 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="xapi_lrs.repository.activity.doctrine" class="XApi\Repository\Doctrine\Repository\ActivityRepository" public="false"/>
+
         <service id="xapi_lrs.repository.statement.doctrine" class="XApi\Repository\Doctrine\Repository\StatementRepository" public="false">
             <argument type="service" id="xapi_lrs.repository.mapped_statement" />
         </service>
