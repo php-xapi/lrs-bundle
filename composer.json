@@ -9,6 +9,10 @@
         {
             "name": "Christian Flothmann",
             "homepage": "https://github.com/xabbuh"
+        },
+        {
+            "name": "Jérôme Parmentier",
+            "homepage": "https://github.com/Lctrs"
         }
     ],
     "require": {
