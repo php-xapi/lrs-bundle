@@ -11,7 +11,7 @@ use Xabbuh\XApi\Serializer\ActivitySerializerInterface;
 use XApi\Fixtures\Json\ActivityJsonFixtures;
 use XApi\Repository\Api\ActivityRepositoryInterface;
 
-class GetActivityControllerSpec extends ObjectBehavior
+class ActivityGetControllerSpec extends ObjectBehavior
 {
     function let(ActivityRepositoryInterface $repository, ActivitySerializerInterface $serializer)
     {

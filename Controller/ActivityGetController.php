@@ -23,7 +23,7 @@ use XApi\Repository\Api\ActivityRepositoryInterface;
 /**
  * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
  */
-final class GetActivityController
+final class ActivityGetController
 {
     private $repository;
     private $serializer;

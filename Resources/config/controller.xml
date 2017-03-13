@@ -5,7 +5,7 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="xapi_lrs.controller.activity.get" class="XApi\LrsBundle\Controller\GetActivityController">
+        <service id="xapi_lrs.controller.activity.get" class="XApi\LrsBundle\Controller\ActivityGetController">
             <argument type="service" id="xapi_lrs.repository.activity" />
             <argument type="service" id="xapi_lrs.serializer.activity" />
         </service>
