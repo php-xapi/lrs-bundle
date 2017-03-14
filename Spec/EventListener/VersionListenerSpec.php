@@ -73,6 +73,14 @@ class VersionListenerSpec extends ObjectBehavior
             ->during('onKernelRequest', array($getResponseEvent));
     }
 
+    function it_normalizes_the_X_Experience_API_Version_header(GetResponseEvent $getResponseEvent, HeaderBag $requestHeaders)
+    {
+        $requestHeaders->get('X-Experience-API-Version')->shouldBeCalled()->willReturn('1.0');
+        $requestHeaders->set('X-Experience-API-Version', '1.0.0')->shouldBeCalled();
+
+        $this->onKernelRequest($getResponseEvent);
+    }
+
     function it_returns_null_if_version_is_supported(GetResponseEvent $getResponseEvent, HeaderBag $requestHeaders)
     {
         $requestHeaders->get('X-Experience-API-Version')->shouldBeCalled()->willReturn('1.0.0');

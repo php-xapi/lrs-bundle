@@ -37,6 +37,10 @@ class VersionListener
         }
 
         if (preg_match('/^1\.0(?:\.\d+)?$/', $version)) {
+            if ('1.0' === $version) {
+                $request->headers->set('X-Experience-API-Version', '1.0.0');
+            }
+
             return;
         }
 
