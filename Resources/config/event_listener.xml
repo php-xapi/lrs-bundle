@@ -16,5 +16,10 @@
             <argument type="service" id="xapi_lrs.statement.serializer" />
             <tag name="kernel.event_listener" event="kernel.request" />
         </service>
+
+        <service id="xapi_lrs.event_listener.version" class="XApi\LrsBundle\EventListener\VersionListener">
+            <tag name="kernel.event_listener" event="kernel.request" />
+            <tag name="kernel.event_listener" event="kernel.response" />
+        </service>
     </services>
 </container>
