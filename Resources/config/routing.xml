@@ -6,6 +6,9 @@
 
     <route id="xapi_lrs.activity.get" path="/activities" methods="GET">
         <default key="_controller">xapi_lrs.controller.activity:getActivity</default>
+        <default key="xapi_lrs.route">
+            <bool>true</bool>
+        </default>
     </route>
 
     <route id="xapi_lrs.statement.put" path="/statements" methods="PUT">
