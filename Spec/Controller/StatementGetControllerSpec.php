@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Xabbuh\XApi\Common\Exception\NotFoundException;
 use Xabbuh\XApi\DataFixtures\StatementFixtures;
+use Xabbuh\XApi\Model\Statement;
 use Xabbuh\XApi\Model\StatementId;
 use Xabbuh\XApi\Model\StatementResult;
 use Xabbuh\XApi\Model\StatementsFilter;
@@ -193,5 +194,82 @@ class StatementGetControllerSpec extends ObjectBehavior
         $statementResultSerializer->serializeStatementResult(new StatementResult(array()))->shouldBeCalled()->willReturn(StatementResultJsonFixtures::getStatementResult());
 
         $this->getStatement($request);
+    }
+
+    function it_adds_a_default_version_if_the_stored_statement_does_not_contain_one(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer)
+    {
+        $request = new Request();
+        $request->query->set('statementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+
+        $statement = StatementFixtures::getMinimalStatement();
+        $repository->findStatementById(StatementId::fromString(StatementFixtures::DEFAULT_STATEMENT_ID))->willReturn($statement);
+
+        $statementSerializer->serializeStatement(Argument::that(function (Statement $statement) {
+            return $statement->getVersion() === '1.0.0';
+        }))->shouldBeCalled()->willReturn(StatementJsonFixtures::getMinimalStatement());
+
+        $this->getStatement($request);
+    }
+
+    function it_does_not_replace_versions_if_the_stored_statement_already_contains_one(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer)
+    {
+        $request = new Request();
+        $request->query->set('statementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+
+        $statement = StatementFixtures::getMinimalStatement()->withVersion('1.0.3');
+        $repository->findStatementById(StatementId::fromString(StatementFixtures::DEFAULT_STATEMENT_ID))->willReturn($statement);
+
+        $statementSerializer->serializeStatement(Argument::that(function (Statement $statement) {
+            return $statement->getVersion() === '1.0.3';
+        }))->shouldBeCalled()->willReturn(StatementJsonFixtures::getMinimalStatement());
+
+        $this->getStatement($request);
+    }
+
+    function it_adds_a_default_version_if_the_stored_voided_statement_does_not_contain_one(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer)
+    {
+        $request = new Request();
+        $request->query->set('voidedStatementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+
+        $statement = StatementFixtures::getMinimalStatement();
+        $repository->findVoidedStatementById(StatementId::fromString(StatementFixtures::DEFAULT_STATEMENT_ID))->willReturn($statement);
+
+        $statementSerializer->serializeStatement(Argument::that(function (Statement $statement) {
+            return $statement->getVersion() === '1.0.0';
+        }))->shouldBeCalled()->willReturn(StatementJsonFixtures::getMinimalStatement());
+
+        $this->getStatement($request);
+    }
+
+    function it_does_not_replace_versions_if_the_stored_voided_statement_already_contains_one(StatementRepositoryInterface $repository, StatementSerializerInterface $statementSerializer)
+    {
+        $request = new Request();
+        $request->query->set('voidedStatementId', StatementFixtures::DEFAULT_STATEMENT_ID);
+
+        $statement = StatementFixtures::getMinimalStatement()->withVersion('1.0.3');
+        $repository->findVoidedStatementById(StatementId::fromString(StatementFixtures::DEFAULT_STATEMENT_ID))->willReturn($statement);
+
+        $statementSerializer->serializeStatement(Argument::that(function (Statement $statement) {
+            return $statement->getVersion() === '1.0.3';
+        }))->shouldBeCalled()->willReturn(StatementJsonFixtures::getMinimalStatement());
+
+        $this->getStatement($request);
+    }
+
+    function it_does_not_replace_stored_versions_in_statement_results(StatementRepositoryInterface $repository, StatementResultSerializerInterface $statementResultSerializer)
+    {
+        $statements = array(
+            StatementFixtures::getMinimalStatement(),
+            StatementFixtures::getMinimalStatement()->withVersion('1.0.3'),
+        );
+        $repository->findStatementsBy(new StatementsFilter())->willReturn($statements);
+
+        $statementResultSerializer->serializeStatementResult(Argument::that(function (StatementResult $result) {
+            $statements = $result->getStatements();
+
+            return $statements[0]->getVersion() === '1.0.0' && $statements[1]->getVersion() === '1.0.3';
+        }))->shouldBeCalled()->willReturn(StatementResultJsonFixtures::getStatementResult());
+
+        $this->getStatement(new Request());
     }
 }

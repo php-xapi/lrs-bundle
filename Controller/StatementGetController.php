@@ -108,6 +108,10 @@ final class StatementGetController
      */
     protected function buildSingleStatementResponse(Statement $statement, $includeAttachments = false)
     {
+        if (null === $statement->getVersion()) {
+            $statement = $statement->withVersion('1.0.0');
+        }
+
         $json = $this->statementSerializer->serializeStatement($statement);
 
         $response = new JsonResponse($json, 200, array(), true);
@@ -129,6 +133,12 @@ final class StatementGetController
      */
     protected function buildMultiStatementsResponse(array $statements, $includeAttachments = false)
     {
+        for ($i = 0; $i < count($statements); ++$i) {
+            if (null === $statements[$i]->getVersion()) {
+                $statements[$i] = $statements[$i]->withVersion('1.0.0');
+            }
+        }
+
         $json = $this->statementResultSerializer->serializeStatementResult(new StatementResult($statements));
 
         $response = new JsonResponse($json, 200, array(), true);
