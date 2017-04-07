@@ -48,6 +48,10 @@ final class StatementPutController
             throw new ConflictHttpException(sprintf('Id parameter ("%s") and statement id ("%s") do not match.', $id->getValue(), $statement->getId()->getValue()));
         }
 
+        if (null === $statement->getId()) {
+            $statement = $statement->withId($id);
+        }
+
         try {
             $existingStatement = $this->repository->findStatementById($id);
 
