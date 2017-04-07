@@ -6,7 +6,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Xabbuh\XApi\Common\Exception\NotFoundException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Xabbuh\XApi\DataFixtures\StatementFixtures;
 use Xabbuh\XApi\Model\StatementId;
 use Xabbuh\XApi\Model\StatementResult;
@@ -60,7 +60,7 @@ class StatementGetControllerSpec extends ObjectBehavior
         $request->query->set('related_agents', false);
 
         $this
-            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->shouldThrow(new BadRequestHttpException('Cannot have "related_agents" parameters. Only "format" and/or "attachments" are allowed with "statementId" or "voidedStatementId".'))
             ->during('getStatement', array($request));
     }
 
@@ -72,7 +72,7 @@ class StatementGetControllerSpec extends ObjectBehavior
         $request->query->set('related_agents', false);
 
         $this
-            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->shouldThrow(new BadRequestHttpException('Cannot have "related_agents" parameters. Only "format" and/or "attachments" are allowed with "statementId" or "voidedStatementId".'))
             ->during('getStatement', array($request));
     }
 
@@ -84,7 +84,7 @@ class StatementGetControllerSpec extends ObjectBehavior
         $request->query->set('related_agents', false);
 
         $this
-            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->shouldThrow(new BadRequestHttpException('Cannot have "related_agents" parameters. Only "format" and/or "attachments" are allowed with "statementId" or "voidedStatementId".'))
             ->during('getStatement', array($request));
     }
 
@@ -95,7 +95,7 @@ class StatementGetControllerSpec extends ObjectBehavior
         $request->query->set('related_agents', false);
 
         $this
-            ->shouldThrow('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException')
+            ->shouldThrow(new BadRequestHttpException('Cannot have "related_agents" parameters. Only "format" and/or "attachments" are allowed with "statementId" or "voidedStatementId".'))
             ->during('getStatement', array($request));
     }
 
