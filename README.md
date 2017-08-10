@@ -26,6 +26,12 @@ To setup, you will need to:
             new XApi\LrsBundle\XApiLrsBundle(),
         ];
 ```
+- update the config.yml (or config_dev.yml)
+```
+xapi_lrs:
+    type: orm
+    object_manager_service: doctrine.orm.entity_manager
+```
 
 There are still issues with the current version of this bundle requesting classes from dependencies which have removed them (documented in php-xapi/lrs-bundle/CHANGELOG.md).
 
