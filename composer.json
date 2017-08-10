@@ -19,6 +19,7 @@
         "php-xapi/exception": "^0.1",
         "php-xapi/model": "^1.1 || ^2.0",
         "php-xapi/repository-api": "^0.3@dev || ^0.4@dev",
+        "php-xapi/repository-doctrine": "^0.3",
         "php-xapi/serializer": "^1.0 || ^2.0",
         "php-xapi/symfony-serializer": "^1.0 || ^2.0",
         "symfony/dependency-injection": "^2.7 || ^3.1",
