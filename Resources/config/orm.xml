@@ -6,11 +6,11 @@
 
     <services>
         <service id="xapi_lrs.doctrine.class_metadata" class="Doctrine\ORM\Mapping\ClassMetadata" public="false">
-            <argument>XApi\Repository\Api\Mapping\MappedStatement</argument>
+            <argument>XApi\Repository\Doctrine\Mapping\Statement</argument>
             <factory service="xapi_lrs.doctrine.object_manager" method="getClassMetadata" />
         </service>
 
-        <service id="xapi_lrs.repository.mapped_statement" class="XApi\Repository\ORM\MappedStatementRepository" public="false">
+        <service id="xapi_lrs.repository.mapped_statement" class="XApi\Repository\Doctrine\Repository\StatementRepository" public="false">
             <argument type="service" id="xapi_lrs.doctrine.object_manager" />
             <argument type="service" id="xapi_lrs.doctrine.class_metadata" />
         </service>
