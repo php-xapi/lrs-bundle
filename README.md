@@ -17,6 +17,7 @@ To setup, you will need to:
         "php-xapi/lrs-bundle": "0.1.x-dev"
     }
 ```
+(replace php-xapi by your own user if you have forked the project)
 - launch `composer update` to download the corresponding libraries
 - add the bundle to app/AppKernel.php in your application
 ```
