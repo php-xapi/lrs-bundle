@@ -14,6 +14,7 @@ To setup, you will need to:
     ],
     "require": {
         ...,
+        "php-xapi/repository-doctrine": "^0.3.x-dev",
         "php-xapi/lrs-bundle": "0.1.x-dev"
     }
 ```
