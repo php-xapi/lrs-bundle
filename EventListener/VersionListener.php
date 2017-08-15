@@ -22,6 +22,8 @@ class VersionListener
 {
     public function onKernelRequest(GetResponseEvent $event)
     {
+        return;
+        
         if (!$event->isMasterRequest()) {
             return;
         }
@@ -49,6 +51,7 @@ class VersionListener
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        return;
         if (!$event->isMasterRequest()) {
             return;
         }
