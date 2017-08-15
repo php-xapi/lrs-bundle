@@ -15,6 +15,40 @@
             "homepage": "https://github.com/Lctrs"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/exception"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/model"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/repository-api"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/repository-doctrine"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/serializer"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/symfony-serializer"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/json-test-fixtures"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/test-fixtures"
+        }
+    ],
     "require": {
         "entrili-oss/exception": "^0.2",
         "entrili-oss/model": "^2.0",
