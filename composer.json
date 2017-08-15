@@ -1,9 +1,9 @@
 {
-    "name": "php-xapi/lrs-bundle",
+    "name": "entrili-oss/lrs-bundle",
     "type": "symfony-bundle",
     "description": "Experience API (xAPI) Learning Record Store (LRS) based on the Symfony Framework",
     "keywords": ["xAPI", "Experience API", "Tin Can API", "LRS", "Learning Record Store", "Symfony", "bundle"],
-    "homepage": "https://github.com/php-xapi/lrs-bundle",
+    "homepage": "https://github.com/entrili-oss/lrs-bundle",
     "license": "MIT",
     "authors": [
         {
@@ -15,19 +15,54 @@
             "homepage": "https://github.com/Lctrs"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/exception"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/model"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/repository-api"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/repository-doctrine"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/serializer"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/symfony-serializer"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/json-test-fixtures"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/entrili-oss/test-fixtures"
+        }
+    ],
     "require": {
-        "php-xapi/exception": "^0.1",
-        "php-xapi/model": "^1.1 || ^2.0",
-        "php-xapi/repository-api": "^0.3@dev || ^0.4@dev",
-        "php-xapi/serializer": "^1.0 || ^2.0",
-        "php-xapi/symfony-serializer": "^1.0 || ^2.0",
+        "entrili-oss/exception": "^0.2",
+        "entrili-oss/model": "^2.0",
+        "entrili-oss/repository-api": "^0.4@dev",
+        "entrili-oss/repository-doctrine": "^0.3",
+        "entrili-oss/serializer": "^3.0",
+        "entrili-oss/symfony-serializer": "^3.0",
         "symfony/dependency-injection": "^2.7 || ^3.1",
         "symfony/http-kernel": "^2.7 || ^3.1"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.3",
-        "php-xapi/json-test-fixtures": "^1.0 || ^2.0",
-        "php-xapi/test-fixtures": "^1.0.1",
+        "entrili-oss/json-test-fixtures": "^2.0",
+        "entrili-oss/test-fixtures": "^1.0",
         "ramsey/uuid": "^2.9 || ^3.0"
     },
     "minimum-stability": "dev",
