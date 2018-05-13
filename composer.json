@@ -34,12 +34,12 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "XApi\\LrsBundle\\": ""
+            "XApi\\LrsBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "spec\\XApi\\LrsBundle\\": "Spec/"
+            "spec\\XApi\\LrsBundle\\": "spec/"
         }
     },
     "extra": {

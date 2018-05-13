@@ -1,6 +1,6 @@
 <?php
 
-namespace Spec\XApi\LrsBundle\DependencyInjection;
+namespace spec\XApi\LrsBundle\DependencyInjection;
 
 use PhpSpec\ObjectBehavior;
 

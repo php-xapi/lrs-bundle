@@ -1,6 +1,6 @@
 <?php
 
-namespace Spec\XApi\LrsBundle\Model;
+namespace spec\XApi\LrsBundle\Model;
 
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\HttpFoundation\ParameterBag;

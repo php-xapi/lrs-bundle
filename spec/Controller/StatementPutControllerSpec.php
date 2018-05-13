@@ -1,6 +1,6 @@
 <?php
 
-namespace Spec\XApi\LrsBundle\Controller;
+namespace spec\XApi\LrsBundle\Controller;
 
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\HttpFoundation\Request;
