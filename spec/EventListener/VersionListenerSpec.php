@@ -1,6 +1,6 @@
 <?php
 
-namespace Spec\XApi\LrsBundle\EventListener;
+namespace spec\XApi\LrsBundle\EventListener;
 
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;

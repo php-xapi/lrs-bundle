@@ -1,6 +1,6 @@
 <?php
 
-namespace Spec\XApi\LrsBundle;
+namespace spec\XApi\LrsBundle;
 
 use PhpSpec\ObjectBehavior;
 
