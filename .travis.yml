@@ -30,7 +30,7 @@ before_install:
 
 install:
   - if [ "$PACKAGES" != "" ]; then composer require --no-update $PACKAGES; fi
-  - composer update $COMPOSER_OPTIONS
+  - composer update $COMPOSER_OPTIONS -vvv
 
 script:
   - vendor/bin/phpspec run
